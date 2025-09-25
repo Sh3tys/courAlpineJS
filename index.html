@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <script src="https://unpkg.com/alpinejs" defer></script>
+  </head>
+  <body>
+    <div>
+      <!--<h1>Hello world!</h1>-->
+      <h1 x-data="{ message: 'Hello World!'}" x-text="message"></h1>
+    </div>
+
+    <div x-data="{ count: 0 }">
+      <button x-data @click="alert('Ceci est une alerte')">Click me</button>
+      <button @click="count++">Increment</button>
+      <button @click="count--">Decrement</button>
+      <button @click="count=0">Reset</button>
+
+      <span x-text="count"></span>
+      <span x-show="count == 5">compteur à 5</span>
+    </div>
+
+    <div x-data="{ open: false }">
+      <button @click="open = !open">Toggle</button>
+
+      <div x-show="open">
+        <p>Contenu caché</p>
+      </div>
+    </div>
+
+    <div x-data="{fruits: ['Apple', 'Banana', 'Orange']}">
+      <template x-for="fruit in fruits" :key="fruit">
+        <div>
+          <span x-text="fruit"></span>
+        </div>
+      </template>
+    </div>
+
+    <div
+      x-data="{ 
+        search: '',
+        fruits: ['foo', 'bar', 'baz', 'qux', 'quux', 'corge', 'grault', 'garply', 'waldo', 'fred', 'plugh', 'xyzzy', 'thud'],
+        get filteredItems() {
+            return this.fruits.filter(fruit => fruit.includes(this.search));
+        } 
+    }"
+    >
+      <!-- get filteredItems fruit.startsWith ou fruit.includes -->
+      <input type="text" x-model="search" placeholder="Search fruits..." />
+
+      <template x-for="fruit in filteredItems" :key="fruit">
+        <div>
+          <span x-text="fruit"></span>
+        </div>
+      </template>
+    </div>
+    <div>-----------------------------------------------------------</div>
+
+    <div
+      x-data="{
+    fruits: ['Apple', 'Banana', 'Orange'],
+    choice(i) {
+      switch (i) {
+        case '0':
+          this.fruits.pop();
+          break;
+        case '1':
+          this.fruits = [];
+          break;
+        case '2':
+          this.fruits = ['Apple', 'Banana', 'Orange'];
+          break;
+      }
+    }
+  }"
+    >
+      <template x-for="fruit in fruits" :key="fruit">
+        <div>
+          <span x-text="fruit"></span>
+        </div>
+      </template>
+
+      <button @click="choice('0')">Supprimer le dernier</button>
+      <button @click="choice('1')">Vider</button>
+      <button @click="choice('2')">Reset</button>
+    </div>
+
+    <div>
+      <div x-data="dropdown">
+        <button @click="toggle">Inverser</button>
+        <div x-show="open">Contents...</div>
+      </div>
+
+      <div x-data="dropdown">
+        <button @click="toggle">Inverser</button>
+        <div x-show="open">Contents...</div>
+      </div>
+    </div>
+
+    <div x-data>
+        <template x-for="ong in $store.tabs.onglets" :key="ong">
+            <button @click="$store.tabs.current = ong" x-text="ong"></button>
+        </template>
+
+        <p x-text="$store.tabs.current"></p>
+
+
+
+    </div>
+
+    <div x-data>
+      <template x-for="ong in $store.tabs.onglets" :key="ong">
+        <button @click="$store.tabs.current = ong" x-text="ong"></button>
+      </template>
+
+      <div x-show="$store.tabs.current == 'Home'">
+        Lorem
+        <img src="https://placehold.co/150x150" alt="" />
+      </div>
+      <div x-show="$store.tabs.current == 'Profile'">
+        Ipsum
+        <img src="https://placehold.co/150x150" alt="" />
+      </div>
+      <div x-show="$store.tabs.current == 'Account'">
+        Dolor
+        <img src="https://placehold.co/150x150" alt="" />
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("alpine:init", () => {
+        Alpine.data("dropdown", () => ({
+          open: false,
+          toggle() {
+            console.log("toggle");
+            this.open = !this.open;
+          },
+        }));
+
+        Alpine.store("tabs", {
+          onglets: ["Home", "Profile", "Account"],
+          current: "Home",
+        });
+
+      });
+    </script>
+  </body>
+</html>
