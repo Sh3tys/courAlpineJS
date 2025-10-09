@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://unpkg.com/alpinejs" defer></script>
+  </head>
+  <body>
+    <div
+      x-data="{
+        inputText: '',
+
+        category: 'Work',
+
+        items: [],
+
+        removeV: -1,
+
+        get filteredItems() {
+          if ($store.tabs.current === 'All') return this.items;
+          return this.items.filter(i => i.category === $store.tabs.current);
+        },
+
+        addItem() {
+          if (this.inputText !== '') {
+            this.items.push({ text: this.inputText, category: this.category });
+            this.inputText = '';
+          }
+        },
+
+        removeItems(index) {
+          this.items.splice(index, 1);
+        },
+      }"
+    >
+      <template x-for="ong in $store.tabs.onglets" :key="ong">
+        <button @click="$store.tabs.current = ong" x-text="ong"></button>
+      </template>
+
+      <br/>
+      <input type="text" x-model="inputText" />
+
+      <select x-model="category">
+        <option value="Work">Work</option>
+        <option value="Perso">Perso</option>
+      </select>
+
+        <button @click="addItem">Add</button>
+
+   <div>
+  <template x-for="item in items" :key="item.text">
+    <span x-text="JSON.stringify(item)"></span>
+  </template>
+</div>
+
+      <div>
+        <template x-for="(item, index) in filteredItems" :key="index">
+          <div x-transition.opacity.duration.1000ms>
+            <span x-text="item.text"></span> 
+            <span x-text="item.category"></span>
+            <button @click="removeItems(index)">X</button>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    </div>
+
+
+    <div x-data="{
+    link: 'http://www.google.fr',
+    }">
+    <button @click="link = 'http://www.google.fr'" >Google</button>
+    <button @click="link = 'http://www.yahoo.fr'" >Yahoo</button>
+    <button @click="link = 'http://www.msn.fr'" >Msn</button>
+    <a :href="link">Mon lien</a>
+    </div>
+
+    <div x-data="{ open: false, color1: 'black', color2: 'black', color3: 'black' }">
+  <button @click="open = !open">Toggle</button>
+
+  <div x-show="open" x-transition.opacity.duration.1000ms>
+    <li :style="`color: ${color1}`" @click="color1 = color1 === 'green' ? 'black' : 'green'">Article 1</li>
+    <li :style="`color: ${color2}`" @click="color2 = color2 === 'green' ? 'black' : 'green'">Article 2</li>
+    <li :style="`color: ${color3}`" @click="color3 = color3 === 'green' ? 'black' : 'green'">Article 3</li>
+  </div>
+</div>
+
+
+<div x-data="{ count: 0 }">
+      <button @click="count++">Increment</button>
+      <button @click="count--">Decrement</button>
+
+      <span @dblclick="count = 0" x-text="count"></span>
+      <template x-if="count == 10">
+        alert('compteur à 10')
+      </template>
+      <span x-effect="if (count === 10) alert('Compteur à 10 !')"></span>
+      <span x-show="count == 10">compteur à 10</span>
+    </div>
+
+
+    <script>
+      document.addEventListener("alpine:init", () => {
+        Alpine.store("tabs", {
+          onglets: ["All", "Work", "Perso"],
+          current: "All",
+        });
+
+      });
+    </script>
+  </body>
+</html>

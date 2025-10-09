@@ -26,7 +26,7 @@
     <div x-data="{ open: false }">
       <button @click="open = !open">Toggle</button>
 
-      <div x-show="open">
+      <div x-show="open" x-transition.opacity.duration.1000ms>
         <p>Contenu caché</p>
       </div>
     </div>
@@ -101,14 +101,11 @@
     </div>
 
     <div x-data>
-        <template x-for="ong in $store.tabs.onglets" :key="ong">
-            <button @click="$store.tabs.current = ong" x-text="ong"></button>
-        </template>
+      <template x-for="ong in $store.tabs.onglets" :key="ong">
+        <button @click="$store.tabs.current = ong" x-text="ong"></button>
+      </template>
 
-        <p x-text="$store.tabs.current"></p>
-
-
-
+      <p x-text="$store.tabs.current"></p>
     </div>
 
     <div x-data>
@@ -130,6 +127,117 @@
       </div>
     </div>
 
+    <div x-data="{ visible: false }" style="margin-top: 20px">
+      <button @click="visible = !visible">
+        <span x-text="visible ? 'Cacher' : 'Afficher'"></span> contenu
+      </button>
+
+      <div
+        x-show="visible"
+        x-transition:enter="transition ease-out duration-500"
+        x-transition:enter-start="opacity-0 transform scale-90"
+        x-transition:enter-end="opacity-100 transform scale-100"
+        x-transition:leave="transition ease-in duration-300"
+        x-transition:leave-start="opacity-100 transform scale-100"
+        x-transition:leave-end="opacity-0 transform scale-90"
+        style="background: #eef; padding: 10px; margin-top: 10px"
+      >
+        <p>Voici un contenu qui apparaît et disparaît avec transition !</p>
+      </div>
+    </div>
+
+    <div x-data="{ color: 'red', size: 20 }" style="margin-top: 20px">
+      <input type="color" x-model="color" />
+      <input type="range" min="10" max="50" x-model="size" />
+
+      <p
+        x-bind:style="`color: ${color}; font-size: ${size}px; font-weight: bold;`"
+      >
+        Ce texte change de couleur et de taille dynamiquement !
+      </p>
+
+      <button
+        x-bind:title="`Couleur actuelle : ${color}`"
+        style="margin-top: 10px"
+      >
+        Survolez-moi pour voir la couleur
+      </button>
+    </div>
+
+    <div x-data="{ input:'', input2:'', input3:'' }" style="margin-top: 30px">
+      <h3>Écouter les events clavier :</h3>
+      <input
+        type="text"
+        x-model="input"
+        @keyup.enter="alert('Entrée pressée')"
+        placeholder="Entrée"
+      />
+      <input
+        type="text"
+        x-model="input2"
+        @keyup.shift.enter="alert('Shift+Entrée')"
+        placeholder="Shift+Entrée"
+      />
+      <input
+        type="password"
+        x-model="input3"
+        @keyup="console.log($event.key)"
+        placeholder="Mot de passe"
+      />
+
+      <h3>Écouter les events souris :</h3>
+      
+
+  <div
+    x-data="{ isActive: false }"
+    @mouseenter="isActive = true; console.log('mouse enter')"
+    @mouseover="console.log('mouse over')"
+    @mouseleave="isActive = false; console.log('mouse leave')"
+    :style="{
+      width: '200px',
+      height: '80px',
+      'background-color': isActive ? 'black' : '#eee',
+      color: isActive ? 'white' : 'black',
+      'text-align': 'center',
+      'line-height': '80px',
+      'border-radius': '10px',
+      'cursor': 'pointer'
+    }"
+    class="transition"
+  >
+    Passez la souris ici
+  </div>
+
+
+
+      <h3>Formulaire :</h3>
+      <form @submit.prevent="alert('submit prevent')" style="margin-top: 10px">
+        <input type="text" placeholder="Nom" />
+        <button type="submit">Envoyer</button>
+      </form>
+      <form @submit.stop="alert('submit stop')" style="margin-top: 10px">
+        <input type="text" placeholder="Nom" />
+        <button type="submit">Envoyer</button>
+      </form>
+
+      <h3>Utilisation de $event :</h3>
+      <button @click="$event.target.remove()">
+        Clique pour supprimer le bouton
+      </button>
+
+      <h3>Custom events :</h3>
+      <div
+        x-data
+        @foo.window="alert('Event foo reçu !')"
+        style="margin-top: 10px; padding: 5px; border: 1px solid #ccc"
+      >
+        Parent écoutant l'event
+      </div>
+      <div x-data style="margin-top: 10px">
+        <button @click="$dispatch('foo')">Envoyer un custom event</button>
+      </div>
+    </div>
+
     <script>
       document.addEventListener("alpine:init", () => {
         Alpine.data("dropdown", () => ({
@@ -144,7 +252,6 @@
           onglets: ["Home", "Profile", "Account"],
           current: "Home",
         });
-
       });
     </script>
   </body>
