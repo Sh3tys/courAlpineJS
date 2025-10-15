@@ -1,133 +1,156 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Apprentissage Alpine.js</title>
 
+    <!-- Import Alpine.js -->
     <script src="https://unpkg.com/alpinejs" defer></script>
   </head>
-  <body>
-    <div>
-      <!--<h1>Hello world!</h1>-->
-      <h1 x-data="{ message: 'Hello World!'}" x-text="message"></h1>
-    </div>
 
-    <div x-data="{ count: 0 }">
-      <button x-data @click="alert('Ceci est une alerte')">Click me</button>
-      <button @click="count++">Increment</button>
-      <button @click="count--">Decrement</button>
-      <button @click="count=0">Reset</button>
+  <body style="font-family: sans-serif; line-height: 1.6;">
+    <h1>🧠 Atelier d'apprentissage Alpine.js</h1>
+    <hr />
 
-      <span x-text="count"></span>
-      <span x-show="count == 5">compteur à 5</span>
-    </div>
+    <!-- x-text : afficher une variable -->
+    <section x-data="{ message: 'Hello World!' }">
+      <h2>1️⃣ x-text</h2>
+      <h3 x-text="message"></h3>
+    </section>
 
-    <div x-data="{ open: false }">
-      <button @click="open = !open">Toggle</button>
+    <hr />
+
+    <!-- Compteur basique -->
+    <section x-data="{ count: 0 }">
+      <h2>2️⃣ Compteur interactif</h2>
+      <button @click="alert('Ceci est une alerte')">Alerte</button>
+      <button @click="count++">+</button>
+      <button @click="count--">-</button>
+      <button @click="count = 0">Reset</button>
+
+      <p>Valeur : <span x-text="count"></span></p>
+
+      <!-- x-show : affichage conditionnel -->
+      <p x-show="count === 5">🎉 Le compteur est à 5 !</p>
+
+      <!-- $watch : observer une variable -->
+      <div x-init="$watch('count', value => console.log('Count modifié :', value))"></div>
+    </section>
+
+    <hr />
+
+    <!-- x-show + transition -->
+    <section x-data="{ open: false }">
+      <h2>3️⃣ x-show et transitions</h2>
+      <button @click="open = !open">Basculer</button>
 
       <div x-show="open" x-transition.opacity.duration.1000ms>
-        <p>Contenu caché</p>
+        <p>Ce contenu apparaît/disparaît avec une transition douce</p>
       </div>
-    </div>
+    </section>
 
-    <div x-data="{fruits: ['Apple', 'Banana', 'Orange']}">
+    <hr />
+
+    <!-- x-for -->
+    <section x-data="{ fruits: ['Apple', 'Banana', 'Orange'] }">
+      <h2>4️⃣ Boucle avec x-for</h2>
       <template x-for="fruit in fruits" :key="fruit">
-        <div>
-          <span x-text="fruit"></span>
-        </div>
+        <div><span x-text="fruit"></span></div>
       </template>
-    </div>
+    </section>
 
-    <div
+    <hr />
+
+    <!-- x-model + computed property -->
+    <section
       x-data="{ 
         search: '',
-        fruits: ['foo', 'bar', 'baz', 'qux', 'quux', 'corge', 'grault', 'garply', 'waldo', 'fred', 'plugh', 'xyzzy', 'thud'],
+        fruits: ['foo', 'bar', 'baz', 'qux', 'quux', 'corge'],
         get filteredItems() {
-            return this.fruits.filter(fruit => fruit.includes(this.search));
-        } 
-    }"
+          return this.fruits.filter(fruit => fruit.includes(this.search));
+        }
+      }"
     >
-      <!-- get filteredItems fruit.startsWith ou fruit.includes -->
-      <input type="text" x-model="search" placeholder="Search fruits..." />
+      <h2>5️⃣ Filtrage avec x-model et getter</h2>
+
+      <input type="text" x-model="search" placeholder="Rechercher..." />
 
       <template x-for="fruit in filteredItems" :key="fruit">
-        <div>
-          <span x-text="fruit"></span>
-        </div>
+        <div><span x-text="fruit"></span></div>
       </template>
-    </div>
-    <div>-----------------------------------------------------------</div>
 
-    <div
+      <!-- x-effect : réaction à des changements -->
+      <div x-effect="console.log('Recherche actuelle :', search)"></div>
+    </section>
+
+    <hr />
+
+    <!-- Méthodes dans x-data -->
+    <section
       x-data="{
-    fruits: ['Apple', 'Banana', 'Orange'],
-    choice(i) {
-      switch (i) {
-        case '0':
-          this.fruits.pop();
-          break;
-        case '1':
-          this.fruits = [];
-          break;
-        case '2':
-          this.fruits = ['Apple', 'Banana', 'Orange'];
-          break;
-      }
-    }
-  }"
+        fruits: ['Apple', 'Banana', 'Orange'],
+        choice(i) {
+          if (i === '0') this.fruits.pop();
+          else if (i === '1') this.fruits = [];
+          else if (i === '2') this.fruits = ['Apple', 'Banana', 'Orange'];
+        }
+      }"
     >
+      <h2>6️⃣ Méthodes personnalisées</h2>
       <template x-for="fruit in fruits" :key="fruit">
-        <div>
-          <span x-text="fruit"></span>
-        </div>
+        <div><span x-text="fruit"></span></div>
       </template>
 
       <button @click="choice('0')">Supprimer le dernier</button>
       <button @click="choice('1')">Vider</button>
       <button @click="choice('2')">Reset</button>
-    </div>
+    </section>
 
-    <div>
+    <hr />
+
+    <!-- Alpine.store + data externe -->
+    <section>
+      <h2>7️⃣ Stores et composants partagés</h2>
+
       <div x-data="dropdown">
-        <button @click="toggle">Inverser</button>
-        <div x-show="open">Contents...</div>
+        <button @click="toggle">Basculer dropdown</button>
+        <div x-show="open">Contenu visible</div>
       </div>
 
       <div x-data="dropdown">
-        <button @click="toggle">Inverser</button>
-        <div x-show="open">Contents...</div>
+        <button @click="toggle">Basculer dropdown</button>
+        <div x-show="open">Contenu visible</div>
       </div>
-    </div>
+    </section>
 
-    <div x-data>
+    <hr />
+
+    <!-- Utilisation du store -->
+    <section x-data>
+      <h2>8️⃣ Store global (onglets)</h2>
+
       <template x-for="ong in $store.tabs.onglets" :key="ong">
-        <button @click="$store.tabs.current = ong" x-text="ong"></button>
+        <button 
+          @click="$store.tabs.current = ong"
+          :class="{ 'font-bold': $store.tabs.current === ong }"
+        >
+          <span x-text="ong"></span>
+        </button>
       </template>
 
-      <p x-text="$store.tabs.current"></p>
-    </div>
+      <p>Onglet actif : <strong x-text="$store.tabs.current"></strong></p>
 
-    <div x-data>
-      <template x-for="ong in $store.tabs.onglets" :key="ong">
-        <button @click="$store.tabs.current = ong" x-text="ong"></button>
-      </template>
+      <div x-show="$store.tabs.current === 'Home'">🏠 Accueil</div>
+      <div x-show="$store.tabs.current === 'Profile'">👤 Profil</div>
+      <div x-show="$store.tabs.current === 'Account'">💰 Compte</div>
+    </section>
 
-      <div x-show="$store.tabs.current == 'Home'">
-        Lorem
-        <img src="https://placehold.co/150x150" alt="" />
-      </div>
-      <div x-show="$store.tabs.current == 'Profile'">
-        Ipsum
-        <img src="https://placehold.co/150x150" alt="" />
-      </div>
-      <div x-show="$store.tabs.current == 'Account'">
-        Dolor
-        <img src="https://placehold.co/150x150" alt="" />
-      </div>
-    </div>
+    <hr />
 
-    <div x-data="{ visible: false }" style="margin-top: 20px">
+    <!-- Transitions personnalisées -->
+    <section x-data="{ visible: false }">
+      <h2>9️⃣ Transitions personnalisées</h2>
       <button @click="visible = !visible">
         <span x-text="visible ? 'Cacher' : 'Afficher'"></span> contenu
       </button>
@@ -135,95 +158,75 @@
       <div
         x-show="visible"
         x-transition:enter="transition ease-out duration-500"
-        x-transition:enter-start="opacity-0 transform scale-90"
-        x-transition:enter-end="opacity-100 transform scale-100"
+        x-transition:enter-start="opacity-0 scale-90"
         x-transition:leave="transition ease-in duration-300"
-        x-transition:leave-start="opacity-100 transform scale-100"
-        x-transition:leave-end="opacity-0 transform scale-90"
+        x-transition:leave-end="opacity-0 scale-90"
         style="background: #eef; padding: 10px; margin-top: 10px"
       >
-        <p>Voici un contenu qui apparaît et disparaît avec transition !</p>
+        <p>Contenu avec effet d’apparition/disparition</p>
       </div>
-    </div>
+    </section>
 
-    <div x-data="{ color: 'red', size: 20 }" style="margin-top: 20px">
+    <hr />
+
+    <!-- x-bind et styles dynamiques -->
+    <section x-data="{ color: 'red', size: 20 }">
+      <h2>🔟 Liaison dynamique avec x-bind</h2>
       <input type="color" x-model="color" />
       <input type="range" min="10" max="50" x-model="size" />
 
-      <p
-        x-bind:style="`color: ${color}; font-size: ${size}px; font-weight: bold;`"
-      >
-        Ce texte change de couleur et de taille dynamiquement !
+      <p x-bind:style="`color: ${color}; font-size: ${size}px; font-weight: bold;`">
+        Ce texte change dynamiquement !
       </p>
+    </section>
 
-      <button
-        x-bind:title="`Couleur actuelle : ${color}`"
-        style="margin-top: 10px"
+    <hr />
+
+    <!-- Gestion des événements clavier et souris -->
+    <section x-data="{ input:'', input2:'', input3:'', isActive: false }">
+      <h2>1️⃣1️⃣ Gestion des événements</h2>
+
+      <h3>Clavier :</h3>
+      <input type="text" @keyup.enter="alert('Entrée pressée')" placeholder="Entrée" />
+      <input type="text" @keyup.shift.enter="alert('Shift + Entrée')" placeholder="Shift+Entrée" />
+      <input type="password" @keyup="console.log($event.key)" placeholder="Mot de passe" />
+
+      <h3>Souris :</h3>
+      <div
+        @mouseenter="isActive = true"
+        @mouseleave="isActive = false"
+        :style="{
+          width: '200px',
+          height: '80px',
+          'background-color': isActive ? 'black' : '#eee',
+          color: isActive ? 'white' : 'black',
+          'text-align': 'center',
+          'line-height': '80px',
+          'border-radius': '10px'
+        }"
       >
-        Survolez-moi pour voir la couleur
-      </button>
-    </div>
+        Passez la souris ici
+      </div>
+    </section>
 
-    <div x-data="{ input:'', input2:'', input3:'' }" style="margin-top: 30px">
-      <h3>Écouter les events clavier :</h3>
-      <input
-        type="text"
-        x-model="input"
-        @keyup.enter="alert('Entrée pressée')"
-        placeholder="Entrée"
-      />
-      <input
-        type="text"
-        x-model="input2"
-        @keyup.shift.enter="alert('Shift+Entrée')"
-        placeholder="Shift+Entrée"
-      />
-      <input
-        type="password"
-        x-model="input3"
-        @keyup="console.log($event.key)"
-        placeholder="Mot de passe"
-      />
+    <hr />
 
-      <h3>Écouter les events souris :</h3>
-      
+    <!-- Formulaires et événements personnalisés -->
+    <section>
+      <h2>1️⃣2️⃣ Formulaires et événements</h2>
 
-  <div
-    x-data="{ isActive: false }"
-    @mouseenter="isActive = true; console.log('mouse enter')"
-    @mouseover="console.log('mouse over')"
-    @mouseleave="isActive = false; console.log('mouse leave')"
-    :style="{
-      width: '200px',
-      height: '80px',
-      'background-color': isActive ? 'black' : '#eee',
-      color: isActive ? 'white' : 'black',
-      'text-align': 'center',
-      'line-height': '80px',
-      'border-radius': '10px',
-      'cursor': 'pointer'
-    }"
-    class="transition"
-  >
-    Passez la souris ici
-  </div>
-
-
-
-      <h3>Formulaire :</h3>
-      <form @submit.prevent="alert('submit prevent')" style="margin-top: 10px">
-        <input type="text" placeholder="Nom" />
-        <button type="submit">Envoyer</button>
-      </form>
-      <form @submit.stop="alert('submit stop')" style="margin-top: 10px">
+      <form @submit.prevent="alert('submit prevent')">
         <input type="text" placeholder="Nom" />
         <button type="submit">Envoyer</button>
       </form>
 
-      <h3>Utilisation de $event :</h3>
-      <button @click="$event.target.remove()">
-        Clique pour supprimer le bouton
-      </button>
+      <form @submit.stop="alert('submit stop')">
+        <input type="text" placeholder="Nom" />
+        <button type="submit">Envoyer</button>
+      </form>
+
+      <h3>$event :</h3>
+      <button @click="$event.target.remove()">Supprimer ce bouton</button>
 
       <h3>Custom events :</h3>
       <div
@@ -236,18 +239,20 @@
       <div x-data style="margin-top: 10px">
         <button @click="$dispatch('foo')">Envoyer un custom event</button>
       </div>
-    </div>
+    </section>
 
     <script>
+      // === Initialisation Alpine ===
       document.addEventListener("alpine:init", () => {
+        // Composant dropdown réutilisable
         Alpine.data("dropdown", () => ({
           open: false,
           toggle() {
-            console.log("toggle");
             this.open = !this.open;
           },
         }));
 
+        // Store global pour les onglets
         Alpine.store("tabs", {
           onglets: ["Home", "Profile", "Account"],
           current: "Home",

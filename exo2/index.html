@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Todo List - Alpine.js</title>
+  <script src="https://unpkg.com/alpinejs" defer></script>
+</head>
+<body>
+
+  <div x-data="todolist"
+       x-init="
+         console.log('TodoList ready');
+         $watch('tasks.length', value => console.log('Nombre de tâches :', value))
+       ">
+
+    <h1>📝 Ma Todo List</h1>
+
+    <input type="text" x-model="newTask" placeholder="Nouvelle tâche">
+    <button @click="addTask()" class="mt-2">Add task</button>
+
+    <ul >
+      <template x-for="(task, index) in tasks" :key="index">
+        <li>
+          <span x-text="task"></span>
+          <button @click="removeTask(index)">🗑️</button>
+        </li>
+      </template>
+    </ul>
+
+    
+    <p x-text="message"></p>
+  </div>
+
+  <script>
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('todolist', () => ({
+        newTask: '',
+        tasks: [],
+        message: 'No task',
+
+        init() {
+          
+          this.tasks.push('Dump Task');
+
+          this.$nextTick(() => {
+            this.$watch('tasks', () => {
+              this.updateMessage();
+            });
+            this.updateMessage();
+          });
+        },
+
+        addTask() {
+          if (this.newTask.trim() !== '') {
+            this.tasks.push(this.newTask.trim());
+            this.newTask = '';
+          }
+        },
+
+        removeTask(index) {
+          this.tasks.splice(index, 1);
+        },
+
+        updateMessage() {
+          this.message = this.tasks.length === 0
+            ? 'No task'
+            : `Tu as ${this.tasks.length} tache${this.tasks.length > 1 ? 's' : ''}`;
+        }
+      }));
+    });
+  </script>
+
+</body>
+</html>
